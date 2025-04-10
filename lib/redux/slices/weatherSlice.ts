@@ -80,7 +80,7 @@ interface WeatherState {
 
 const initialState: WeatherState = {
   cities: ["New York", "London", "Tokyo"],
-  favorites: [],
+  favorites: typeof window !== "undefined" ? JSON.parse(localStorage.getItem('weatherFavorites') || '[]') : [],  // Safely check for localStorage
   data: {},
   history: {},
   status: "idle",
@@ -99,8 +99,24 @@ const weatherSlice = createSlice({
       } else {
         state.favorites.push(city)
       }
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("weatherFavorites", JSON.stringify(state.favorites))
+      }
     },
+    setFavoriteCities: (state, action: PayloadAction<string[]>) => {
+      state.favorites = action.payload
+    },
+
+    // setFavoriteCities: (state, action: PayloadAction<string[]>) => {
+    //   state.favorites = action.payload
+
+    //   if (typeof window !== "undefined") {
+    //     localStorage.setItem("weatherFavorites", JSON.stringify(state.favorites))
+    //   }
+    // }
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchWeatherData.pending, (state) => {
@@ -130,5 +146,5 @@ const weatherSlice = createSlice({
   },
 })
 
-export const { toggleFavoriteCity } = weatherSlice.actions
+export const { toggleFavoriteCity, setFavoriteCities } = weatherSlice.actions
 export default weatherSlice.reducer

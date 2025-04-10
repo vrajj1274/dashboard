@@ -73,7 +73,13 @@ export function WeatherCard({ city, data, isLoading }: WeatherCardProps) {
 
   return (
     <Link href={`/weather/${encodeURIComponent(city)}`}>
-      <Card className="hover:shadow-md transition-shadow">
+      <Card
+        className={cn(
+          "hover:shadow-md transition-shadow",
+          isFavorite && "border-yellow-500 border-2"
+        )}
+      >
+
         <CardContent className="p-4">
           <div className="flex justify-between items-start">
             <h3 className="text-lg font-medium">{city}</h3>

@@ -83,7 +83,6 @@ export const fetchCryptoHistory = createAsyncThunk(
 )
 
 export const startWebSocket = () => (dispatch: AppDispatch) => {
-  // CoinGecko doesn't support WebSocket; still using CoinCap or simulated alerts
   const ws = new WebSocket("wss://ws.coincap.io/prices?assets=bitcoin,ethereum,solana")
 
   ws.onmessage = (event) => {
@@ -118,7 +117,7 @@ interface CryptoState {
 
 const initialState: CryptoState = {
   cryptos: ["bitcoin", "ethereum", "solana"],
-  favorites: [],
+  favorites: [], // SSR-safe
   data: {},
   history: {},
   status: "idle",
@@ -137,6 +136,13 @@ const cryptoSlice = createSlice({
       } else {
         state.favorites.push(crypto)
       }
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("cryptoFavorites", JSON.stringify(state.favorites))
+      }
+    },
+    setFavoriteCryptos: (state, action: PayloadAction<string[]>) => {
+      state.favorites = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -167,5 +173,5 @@ const cryptoSlice = createSlice({
   },
 })
 
-export const { toggleFavoriteCrypto } = cryptoSlice.actions
+export const { toggleFavoriteCrypto, setFavoriteCryptos } = cryptoSlice.actions
 export default cryptoSlice.reducer

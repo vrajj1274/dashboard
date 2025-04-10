@@ -75,7 +75,12 @@ export function CryptoCard({ id, data, isLoading }: CryptoCardProps) {
 
   return (
     <Link href={`/crypto/${id}`}>
-      <Card className="hover:shadow-md transition-shadow">
+      <Card
+        className={cn(
+          "hover:shadow-md transition-shadow",
+          isFavorite && "border-yellow-500 border-2"
+        )}
+      >
         <CardContent className="p-4">
           <div className="flex justify-between items-start">
             <div>
