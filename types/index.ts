@@ -8,12 +8,12 @@ export interface WeatherData {
 }
 
 export interface WeatherHistoryData {
+  timestamp: string | number
   temperature: number
   condition: string
   humidity: number
-  windSpeed: number
-  timestamp: string
 }
+
 
 // Crypto Types
 export interface CryptoData {
@@ -44,8 +44,13 @@ export interface NewsArticle {
   source: string
   publishedAt: string
 }
-
-
+export interface NewsApiResponseItem {
+  title: string
+  description: string
+  link: string
+  source_id: string
+  pubDate: string
+}
 // Notification Types
 export interface Notification {
   type: "price_alert" | "weather_alert"

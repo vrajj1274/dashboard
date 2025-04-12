@@ -31,13 +31,13 @@ export function CryptoCard({ id, data, isLoading }: CryptoCardProps) {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start">
+      <Card className="bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition-shadow">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-center mb-4">
             <Skeleton className="h-6 w-24" />
             <Skeleton className="h-6 w-6 rounded-full" />
           </div>
-          <div className="mt-4 space-y-2">
+          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition">
             <Skeleton className="h-10 w-20" />
             <Skeleton className="h-4 w-32" />
             <Skeleton className="h-4 w-24" />
@@ -49,21 +49,21 @@ export function CryptoCard({ id, data, isLoading }: CryptoCardProps) {
 
   if (!data) {
     return (
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start">
-            <h3 className="text-lg font-medium">{id}</h3>
+      <Card className="bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition-shadow">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-semibold text-gray-700">{id}</h3>
             <Button
               variant="ghost"
               size="icon"
               onClick={handleToggleFavorite}
               className={cn(isFavorite ? "text-yellow-500" : "text-muted-foreground")}
             >
-              <Star className="h-4 w-4" />
+              <Star className="h-5 w-5" />
               <span className="sr-only">Toggle favorite</span>
             </Button>
           </div>
-          <div className="mt-4">
+          <div>
             <p className="text-sm text-muted-foreground">No data available</p>
           </div>
         </CardContent>
@@ -77,14 +77,14 @@ export function CryptoCard({ id, data, isLoading }: CryptoCardProps) {
     <Link href={`/crypto/${id}`}>
       <Card
         className={cn(
-          "hover:shadow-md transition-shadow",
+          "bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition-shadow",
           isFavorite && "border-yellow-500 border-2"
         )}
       >
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-center mb-4">
             <div>
-              <h3 className="text-lg font-medium">{data.name}</h3>
+              <h3 className="text-xl font-semibold text-gray-800">{data.name}</h3>
               <p className="text-sm text-muted-foreground">{data.symbol.toUpperCase()}</p>
             </div>
             <Button
@@ -93,17 +93,17 @@ export function CryptoCard({ id, data, isLoading }: CryptoCardProps) {
               onClick={handleToggleFavorite}
               className={cn(isFavorite ? "text-yellow-500" : "text-muted-foreground")}
             >
-              <Star className="h-4 w-4" />
+              <Star className="h-5 w-5" />
               <span className="sr-only">Toggle favorite</span>
             </Button>
           </div>
           <div className="mt-4">
-            <p className="text-2xl font-bold">${data.currentPrice.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-gray-800">${data.currentPrice.toLocaleString()}</p>
             <div className="flex items-center mt-1">
               {isPositiveChange ? (
-                <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                <TrendingUp className="h-5 w-5 text-green-500 mr-1" />
               ) : (
-                <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
+                <TrendingDown className="h-5 w-5 text-red-500 mr-1" />
               )}
               <p className={cn("text-sm", isPositiveChange ? "text-green-500" : "text-red-500")}>
                 {isPositiveChange ? "+" : ""}

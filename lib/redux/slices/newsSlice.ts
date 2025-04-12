@@ -10,6 +10,7 @@ interface NewsApiItem {
   link: string
   source_id: string
   pubDate: string
+  error: string | null // Add error property to the state
 }
 
 export const fetchNewsData = createAsyncThunk(
@@ -44,13 +45,16 @@ export const fetchNewsData = createAsyncThunk(
 )
 
 interface NewsState {
-  articles: NewsArticle[]
-  status: "idle" | "loading" | "succeeded" | "failed"
+  articles: NewsArticle[]; // or whatever structure your articles follow
+  status: 'idle' | 'loading' | 'succeeded' | 'failed'; // depending on your status management
+  error: string | null; // error can be null initially or a string
 }
+
 
 const initialState: NewsState = {
   articles: [],
-  status: "idle",
+  status: 'idle', // or any other state you have
+  error: null, // ensure error is initialized here, with a default of null or string
 }
 
 const newsSlice = createSlice({
@@ -60,16 +64,18 @@ const newsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchNewsData.pending, (state) => {
-        state.status = "loading"
+        state.status = 'loading';
       })
       .addCase(fetchNewsData.fulfilled, (state, action) => {
-        state.articles = action.payload
-        state.status = "succeeded"
+        state.status = 'succeeded';
+        state.articles = action.payload;
       })
-      .addCase(fetchNewsData.rejected, (state) => {
-        state.status = "failed"
-      })
+      .addCase(fetchNewsData.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Something went wrong';
+      });
   },
+
 })
 
 export default newsSlice.reducer

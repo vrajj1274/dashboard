@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/tool
 import type { WeatherData, WeatherHistoryData } from "@/types"
 import { addNotification } from "./notificationsSlice"
 
-// Fetch weather data from real API using env variable
+// Fetch current weather data
 export const fetchWeatherData = createAsyncThunk(
   "weather/fetchWeatherData",
   async (city: string, { rejectWithValue, dispatch }) => {
@@ -22,7 +22,7 @@ export const fetchWeatherData = createAsyncThunk(
         timestamp: new Date().toISOString(),
       }
 
-      // Optional: Simulated alert (10% chance)
+      // Optional simulated alert
       if (Math.random() < 0.1) {
         dispatch(
           addNotification({
@@ -41,7 +41,7 @@ export const fetchWeatherData = createAsyncThunk(
   }
 )
 
-// Simulated historical weather data
+// Simulate weather history data
 export const fetchWeatherHistory = createAsyncThunk(
   "weather/fetchWeatherHistory",
   async (city: string, { rejectWithValue }) => {
@@ -67,6 +67,7 @@ export const fetchWeatherHistory = createAsyncThunk(
     }
   }
 )
+
 interface WeatherState {
   cities: string[]
   favorites: string[]
@@ -74,15 +75,19 @@ interface WeatherState {
   history: Record<string, WeatherHistoryData[]>
   status: "idle" | "loading" | "succeeded" | "failed"
   historyStatus: "idle" | "loading" | "succeeded" | "failed"
+  error: string | null
+  historyError: string | null
 }
 
 const initialState: WeatherState = {
   cities: ["New York", "London", "Tokyo"],
-  favorites: typeof window !== "undefined" ? JSON.parse(localStorage.getItem('weatherFavorites') || '[]') : [],
+  favorites: [],
   data: {},
   history: {},
   status: "idle",
   historyStatus: "idle",
+  error: null,
+  historyError: null,
 }
 
 const weatherSlice = createSlice({
@@ -103,32 +108,38 @@ const weatherSlice = createSlice({
     },
     setFavoriteCities: (state, action: PayloadAction<string[]>) => {
       state.favorites = action.payload
-    }
+    },
   },
-
   extraReducers: (builder) => {
     builder
+      // Weather Data
       .addCase(fetchWeatherData.pending, (state) => {
         state.status = "loading"
+        state.error = null
       })
       .addCase(fetchWeatherData.fulfilled, (state, action) => {
         const { city, data } = action.payload
         state.data[city] = data
         state.status = "succeeded"
       })
-      .addCase(fetchWeatherData.rejected, (state) => {
+      .addCase(fetchWeatherData.rejected, (state, action) => {
         state.status = "failed"
+        state.error = typeof action.payload === "string" ? action.payload : "Failed to fetch weather data"
       })
+
+      // Weather History
       .addCase(fetchWeatherHistory.pending, (state) => {
         state.historyStatus = "loading"
+        state.historyError = null
       })
       .addCase(fetchWeatherHistory.fulfilled, (state, action) => {
         const { city, history } = action.payload
         state.history[city] = history
         state.historyStatus = "succeeded"
       })
-      .addCase(fetchWeatherHistory.rejected, (state) => {
+      .addCase(fetchWeatherHistory.rejected, (state, action) => {
         state.historyStatus = "failed"
+        state.historyError = typeof action.payload === "string" ? action.payload : "Failed to fetch weather history"
       })
   },
 })

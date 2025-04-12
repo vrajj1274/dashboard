@@ -6,6 +6,7 @@ import { Providers } from "@/lib/providers"
 import { Toaster } from "@/components/ui/toaster"
 import { Header } from "@/components/header"
 
+
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {

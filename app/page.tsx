@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client"
 
 import { useEffect } from "react"
@@ -11,6 +10,8 @@ import { WeatherCard } from "@/components/weather/weather-card"
 import { CryptoCard } from "@/components/crypto/crypto-card"
 import { NewsSection } from "@/components/news/news-section"
 import { useHydrateCryptoFavorites } from "@/lib/hooks/useHydrateCryptoFavorites"
+import WeatherClientSync from "@/components/weather/WeatherClientSync"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function HomePage() {
   useHydrateCryptoFavorites()
@@ -60,32 +61,55 @@ export default function HomePage() {
       />
     ))
 
+  const renderSkeletonCards = (type: "weather" | "crypto") => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {[...Array(3)].map((_, index) => (
+        <div key={index} className="w-full">
+          {type === "weather" ? (
+            <Skeleton className="h-40 w-full rounded-lg" />
+          ) : (
+            <Skeleton className="h-40 w-full rounded-lg" />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+
   return (
     <div className="space-y-10">
       {/* Weather Section */}
       <section>
+        <WeatherClientSync />
         <h2 className="text-2xl font-bold mb-4">🌦️ Favorite Cities</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {renderWeatherCards(weatherFavorites)}
-        </div>
+        {isWeatherLoading ? renderSkeletonCards("weather") : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {renderWeatherCards(weatherFavorites)}
+          </div>
+        )}
 
         <h2 className="text-2xl font-bold mt-8 mb-4">🌍 All Cities</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {renderWeatherCards(cities.filter((city) => !weatherFavorites.includes(city)))}
-        </div>
+        {isWeatherLoading ? renderSkeletonCards("weather") : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {renderWeatherCards(cities.filter((city) => !weatherFavorites.includes(city)))}
+          </div>
+        )}
       </section>
 
       {/* Crypto Section */}
       <section>
         <h2 className="text-2xl font-bold mb-4">💰 Favorite Cryptocurrencies</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {renderCryptoCards(cryptoFavorites)}
-        </div>
+        {isCryptoLoading ? renderSkeletonCards("crypto") : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {renderCryptoCards(cryptoFavorites)}
+          </div>
+        )}
 
         <h2 className="text-2xl font-bold mt-8 mb-4">📈 All Cryptocurrencies</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {renderCryptoCards(cryptos.filter((id) => !cryptoFavorites.includes(id)))}
-        </div>
+        {isCryptoLoading ? renderSkeletonCards("crypto") : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {renderCryptoCards(cryptos.filter((id) => !cryptoFavorites.includes(id)))}
+          </div>
+        )}
       </section>
 
       {/* News Section */}
